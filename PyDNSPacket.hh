@@ -3,15 +3,6 @@ class CPyDNSPacket: public PyObject
 public:
 	DNSPacket* __m_p;
 
-	CPyDNSPacket(DNSPacket* p)
-	{
-		__m_p = p
-	}
-
-	~CPyDNSPacket()
-	{
-	}
-
 	PyObject* getRemote()
 	{
 		return PyString_FromString(__m_p->getRemote().c_str());
