@@ -8,6 +8,7 @@
 #include <pdns/logger.hh>
 
 #include <pthread.h>
+#include <Python.h>
 
 class PythonBackend : public DNSBackend
 {
