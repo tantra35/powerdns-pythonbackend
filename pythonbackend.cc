@@ -112,7 +112,10 @@ void PythonBackend::lookup(const QType &qtype, const string &qdomain, DNSPacket 
 	RefCount<CPyDNSPacket> l_pDNSPacket = PyObject_New(CPyDNSPacket, &PyDNSPacketType);
 	l_pDNSPacket->m_p = pkt_p;
 
-	RefCount<PyObject> l_retval = PyObject_CallMethod(__m_py_object, "lookup", "(IsOI)", qtype, qdomain.c_str(), l_pDNSPacket, zoneId);
+	RefCount<CPyQType> l_pQType = PyObject_New(CPyQType, &PyQTypeType);
+	l_pQType->qtype = qtype;
+
+	RefCount<PyObject> l_retval = PyObject_CallMethod(__m_py_object, "lookup", "(IsOI)", (PyObject*)l_pQType, qdomain.c_str(), (PyObject*)l_pDNSPacket, zoneId);
 
 	if(!l_retval)
 	{
@@ -149,7 +152,7 @@ bool PythonBackend::get(DNSResourceRecord &r)
 	RefCount<CPyDNSResourceRecord> l_pDNSResourceRecord = PyObject_New(CPyDNSResourceRecord, &PyDNSResourceRecordType);
 	l_pDNSResourceRecord->m_p = &r;
 
-	RefCount<PyObject> l_retval = PyObject_CallMethod(__m_py_object, "get", "(O)", l_pDNSResourceRecord);
+	RefCount<PyObject> l_retval = PyObject_CallMethod(__m_py_object, "get", "(O)", (PyObject*)l_pDNSResourceRecord);
 
 	if(!l_retval)
 	{
@@ -174,7 +177,7 @@ bool PythonBackend::getSOA(const string &name, SOAData &soadata, DNSPacket *pkt_
 	soadata.db = this;
 	l_pSOAData->psoa = &soadata;
 
-	RefCount<PyObject> l_retval = PyObject_CallMethod(__m_py_object, "getSOA", "(sOO)", name.c_str(), l_pSOAData, l_pDNSPacket);
+	RefCount<PyObject> l_retval = PyObject_CallMethod(__m_py_object, "getSOA", "(sOO)", name.c_str(), (PyObject*)l_pSOAData, (PyObject*)l_pDNSPacket);
 
 	if(!l_retval)
 	{
