@@ -17,7 +17,7 @@ int PyQTypeType___init__(CPyQType *self, PyObject *args, PyObject *kwds)
 			self->qtype = PyString_AsString(l_pp);
 			retval = 0;
 		}
-		else if(Py_TYPE(l_pp) == &PyQTypeType)
+		else if(PyObject_IsInstance(l_pp, (PyObject *)&PyQTypeType))
 		{
 			self->qtype = ((CPyQType *)l_pp)->qtype;
 			retval = 0;
@@ -75,7 +75,7 @@ PyTypeObject PyQTypeType =
 {
     PyObject_HEAD_INIT(NULL)
     0,                                        /*ob_size*/
-    "playrix.powerDNS.QType",                 /*tp_name*/
+    "playrix._powerDNS._QType",               /*tp_name*/
     sizeof(CPyQType),                         /*tp_basicsize*/
     0,                                        /*tp_itemsize*/
     0,                                        /*tp_dealloc*/
@@ -93,7 +93,7 @@ PyTypeObject PyQTypeType =
     0,                                        /*tp_getattro*/
     0,                                        /*tp_setattro*/
     0,                                        /*tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT,                       /*tp_flags*/
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
     "QType waraper",                          /* tp_doc */
     0,                                        /* tp_traverse */
     0,                                        /* tp_clear */

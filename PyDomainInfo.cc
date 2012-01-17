@@ -203,7 +203,7 @@ PyTypeObject PyDomainInfoType =
 {
 	PyObject_HEAD_INIT(NULL)
 	0,                                        /*ob_size*/
-	"playrix.powerDNS.DomainInfo",            /*tp_name*/
+	"playrix._powerDNS.DomainInfo",           /*tp_name*/
 	sizeof(CPyDomainInfo),                    /*tp_basicsize*/
 	0,                                        /*tp_itemsize*/
 	(destructor)PyDomainInfoType_dealloc,     /*tp_dealloc*/

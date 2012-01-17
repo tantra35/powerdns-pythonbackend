@@ -209,7 +209,7 @@ PyTypeObject PySOADataType =
 {
 	PyObject_HEAD_INIT(NULL)
 	0,                                        /*ob_size*/
-	"playrix.powerDNS.SOAData",               /*tp_name*/
+	"playrix._powerDNS.SOAData",              /*tp_name*/
 	sizeof(CPySOAData),                       /*tp_basicsize*/
 	0,                                        /*tp_itemsize*/
 	0,                                        /*tp_dealloc*/

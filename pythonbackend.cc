@@ -48,12 +48,15 @@ PythonBackendFactory::PythonBackendFactory() : BackendFactory("python")
 		Py_INCREF(&PySOADataType);
 		Py_INCREF(&PyDomainInfoType);
 
-		Py_InitModule("playrix", NULL);
-		PyObject* l_playrix_powerDNSmodule = Py_InitModule("playrix.powerDNS", NULL);
+		RefCount<PyObject> l_playrix_module = PyImport_ImportModule("playrix");
+		PyObject* l_playrix_powerDNSmodule = Py_InitModule("playrix._powerDNS", NULL);
+		PyModule_AddObject(l_playrix_module, "_powerDNS", l_playrix_powerDNSmodule);
 
-		PyModule_AddObject(l_playrix_powerDNSmodule, "QType", (PyObject*)&PyQTypeType);
+		PyModule_AddObject(l_playrix_powerDNSmodule, "_QType", (PyObject*)&PyQTypeType);
 		PyModule_AddObject(l_playrix_powerDNSmodule, "SOAData", (PyObject*)&PySOADataType);
 		PyModule_AddObject(l_playrix_powerDNSmodule, "DomainInfo", (PyObject*)&PyDomainInfoType);
+		PyModule_AddObject(l_playrix_powerDNSmodule, "DNSResourceRecord", (PyObject*)&PyDNSResourceRecordType);
+		PyModule_AddObject(l_playrix_powerDNSmodule, "DNSPacket", (PyObject*)&PyDNSPacketType);
 
 		PyThreadState_Swap(NULL);
 		PyEval_ReleaseLock();

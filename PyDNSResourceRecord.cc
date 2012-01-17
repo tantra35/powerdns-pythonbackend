@@ -13,7 +13,7 @@ int PyDNSResourceRecordType_getseters_setqtype(CPyDNSResourceRecord *self, PyObj
 {
 	int retval = -1;
 
-	if(Py_TYPE(value) == &PyQTypeType)
+	if(PyObject_IsInstance(value, (PyObject *)&PyQTypeType))
 	{
 		CPyQType* l_pQType = (CPyQType*)value;
 		self->m_p->qtype = l_pQType->qtype;
@@ -199,7 +199,7 @@ PyTypeObject PyDNSResourceRecordType =
 {
 	PyObject_HEAD_INIT(NULL)
 	0,                                        /*ob_size*/
-	"playrix.powerDNS.DNSResourceRecord",     /*tp_name*/
+	"playrix._powerDNS.DNSResourceRecord",    /*tp_name*/
 	sizeof(CPyDNSResourceRecord),             /*tp_basicsize*/
 	0,                                        /*tp_itemsize*/
 	0,                                        /*tp_dealloc*/
