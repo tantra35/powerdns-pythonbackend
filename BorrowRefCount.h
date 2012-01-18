@@ -32,93 +32,25 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
  *
  */
-#ifndef _SQUID_REFCOUNT_H_
-#define _SQUID_REFCOUNT_H_
+
+#ifndef _SQUID_BORROWREFCOUNT_H_
+#define _SQUID_BORROWREFCOUNT_H_
+
+#include "RefCount.h"
 
 template <class C>
-
-class RefCount
+class BorrowRefCount : public RefCount<C>
 {
 
 public:
-    RefCount () : p_ (NULL)
-    {
-    }
-
-		RefCount (C *p) : p_(p)
+		BorrowRefCount () : RefCount<C>()
 		{
 		}
 
-    virtual ~RefCount()
+    BorrowRefCount (C *p) : RefCount<C>(p)
     {
-        dereference();
-    }
-
-    RefCount (const RefCount &p) : p_(p.p_)
-    {
-        reference (p);
-    }
-
-    RefCount& operator = (const RefCount& p)
-    {
-        // DO NOT CHANGE THE ORDER HERE!!!
-        // This preserves semantics on self assignment
-        C *newP_ = p.p_;
-        reference(p);
-        dereference(newP_);
-        return *this;
-    }
-
-		bool operator !() const { return !p_; }
-		
-		operator C* () {return p_;}
-		
-		C const ** operator& () const {return &p_; }
-		
-		C ** operator& () {return const_cast<C **>(&p_); }
-
-    C const * operator-> () const {return p_; }
-
-    C * operator-> () {return const_cast<C *>(p_); }
-
-    C const & operator * () const {return *p_; }
-
-    C & operator * () {return *const_cast<C *>(p_); }
-
-    C * getRaw() const{return p_; }
-
-    bool operator == (const RefCount& p) const
-    {
-        return p.p_ == p_;
-    }
-
-    bool operator != (const RefCount &p) const
-    {
-        return p.p_ != p_;
-    }
-
-protected:
-    void dereference(C *newP = NULL)
-    {
-        /* Setting p_ first is important:
-        * we may be freed ourselves as a result of
-        * delete p_;
-        */
-        C (*tempP_) (p_);
-        p_ = newP;
-
-        if (tempP_)
-            Py_DECREF(tempP_);
-    }
-
-    void reference (const RefCount& p)
-    {
-        if (p.p_)
-           Py_INCREF(p.p_);
-    }
-
-    C *p_;
-
+    	 reference (*this);
+		}
 };
 
 #endif /* _SQUID_REFCOUNT_H_ */
