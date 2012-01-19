@@ -12,6 +12,7 @@ class backend:
     self.__m_qdomains = {};
     self.__m_loger = logging.getLogger("playrix.powerDNS.g300_net");
     self.__m_zone_id = zone_id
+    self.__m_qname = qname;
 
     for l_option in options:
       l_name, l_value = l_option;
@@ -132,7 +133,7 @@ class backend:
     return retval;
 
   def getSOA(self, qdomain, soadata, dnspkt):
-    if qdomain in self.__m_qdomains:
+    if qdomain == self.__m_qname:
       l_rr = self.__m_qdomains[qdomain]['SOA'];
 
       soadata.qname = qdomain;
