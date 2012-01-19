@@ -10,11 +10,11 @@ import math;
 #
 #------------------------------------------------------------------------------
 class backend:
-  def __init__(self, qname, options):
+  def __init__(self, qname):
 #    self.__m_geo = GeoIP.open("/usr/share/GeoIP/GeoIPCity.dat", GeoIP.GEOIP_MEMORY_CACHE);
     self.__m_geo = GeoIP.open("/usr/share/GeoIP/GeoIPCity.dat", GeoIP.GEOIP_STANDARD);
-    self.__m_lookup_responce_iter = None;
     self.__m_qname = qname;
+   
 
   @staticmethod
   def __distance(point1, point2):
@@ -31,11 +31,8 @@ class backend:
 
     return retval;
 
-  def lookup(self, qtype, qdomain, dnspkt, domain_id):
+  def list(self, qtype, qdomain, dnspkt, domain_id):
     logging.debug("call from remote addr: " + dnspkt.getRemote());
-    logging.debug("call with qtype: " + str(qtype));
-    logging.debug("call with qdomain: " + qdomain);
-    logging.debug("call with domain_id: " + str(domain_id));
 
     l_domain_backets = {
       'g21.g300.net': {
@@ -75,36 +72,9 @@ class backend:
             l_nearest_backet = l_bvalue;
 
         for l_ip in l_nearest_backet['ips']:
-          l_lookup_responce.append({'type': QType.A, 'data': l_ip, 'qname': qdomain, 'domain_id': 10});
+          l_lookup_responce.append({'type': QType.A, 'content': l_ip, 'qname': qdomain, 'ttl': 60});
 
     if len(l_lookup_responce):
-      self.__m_lookup_responce_iter = iter(l_lookup_responce);
+      return l_lookup_responce;
 
-
-  def list(self, target, domain_id):
-    logging.debug("call with target: " + target);
-
-    return False;
-
-  def get(self, dnsresrecord):
-    logging.debug("call");
-    retval = False;
-
-    if self.__m_lookup_responce_iter:
-      l_item = next(self.__m_lookup_responce_iter, False);
-
-      if l_item:
-        dnsresrecord.qtype = QType(l_item['type']);
-        dnsresrecord.ttl = 60;
-        dnsresrecord.priority = 0;
-        dnsresrecord.last_modified = 0;
-        dnsresrecord.qname = l_item['qname'];
-        dnsresrecord.content = l_item['data'];
-        dnsresrecord.domain_id = l_item['domain_id'];
-
-        retval = True;
-
-    return retval;
-
-  def getSOA(self, name, soadata, dnspkt):
-    return False;
+    return ();
