@@ -1,6 +1,5 @@
 import ConfigParser;
 import logging;
-import traceback;
 
 #------------------------------------------------------------------------------
 #
@@ -81,7 +80,7 @@ class loader(object):
     return False;
 
   def getSOA(self, qdomain, soadata, dnspkt):
-    self.__m_loger.debug("call from remote qdomain: " + qdomain);
+    self.__m_loger.debug("call with qdomain: " + qdomain);
     self.__m_loger.debug("call with dnspkt: " + str(dnspkt));
 
     self.__m_handler = None;

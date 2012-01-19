@@ -1,5 +1,6 @@
 from playrix.powerDNS import QType;
 import logging;
+import re;
 
 #------------------------------------------------------------------------------
 #
@@ -27,16 +28,16 @@ class backend:
         if not 'A' in self.__m_qdomains[l_lqdomain]:
           self.__m_qdomains[l_lqdomain]['A'] = [];
 
-        if len(l_parts) > 2:
+        if re.match('\d+\.\d+\.\d+\.\d+', l_parts[1]):
           self.__m_qdomains[l_lqdomain]['A'].append({'type': QType.A, 'content': l_parts[1], 'qname': l_lqdomain, 'ttl': int(l_parts[2])})
 
-        else:
-          l_module_name, l_class_name = l_parts[1].rsplit('.', 1);
+        elif l_parts[1].find('class:') == 0:
+          l_module_name, l_class_name = l_parts[1][6:].rsplit('.', 1);
 
           l_module =__import__(l_module_name, globals(), locals(), ['']);
           l_class = getattr(l_module, l_class_name);
 
-          self.__m_qdomains[l_lqdomain]['A'].append({'handler': l_class(qname)});
+          self.__m_qdomains[l_lqdomain]['A'].append({'handler': l_class(qname, l_parts[2:])});
 
       elif l_name == 'ns':  
         l_parts = l_value.split(" ");
@@ -101,10 +102,13 @@ class backend:
     retval = False;
 
     for l_lqdomain, l_qdomaindata in self.__m_qdomains.iteritems():
-      for __l_tmp, ll_qdomaindata in l_qdomaindata.iteritems():
-        for l_rrecord in ll_qdomaindata:
-          if not 'handler' in l_rrecord:
-            l_lookup_responce.append(l_rrecord);
+      for l_rrname, ll_qdomaindata in l_qdomaindata.iteritems():
+        if l_rrname != 'SOA':
+          for l_rrecord in ll_qdomaindata:
+            if not 'handler' in l_rrecord:
+              l_lookup_responce.append(l_rrecord);
+
+    self.__m_loger.debug(l_lookup_responce);
 
     if len(l_lookup_responce):
       self.__m_lookup_responce_iter = iter(l_lookup_responce);
