@@ -1,4 +1,10 @@
-import loader;
+import mmap;
+import time;
 
-l_m = loader.loader('loader.cfg');
-#l_m.lookup(None, "ns1.g300.net", None, -1);
+with open("hello.txt", "r+") as f:
+  while True:
+    map = mmap.mmap(f.fileno(), 1000);
+    print map[0:9];
+
+    time.sleep(1);
+
