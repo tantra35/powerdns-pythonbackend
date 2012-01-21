@@ -27,7 +27,6 @@ class backend:
     l_lookup_responce = [];
     l_lqdomain = qdomain.lower();
 
-
     if l_lqdomain in l_domain_backets:
       if 'LB' in l_domain_backets[l_lqdomain]:
         l_backet = l_domain_backets[l_lqdomain]['LB'];

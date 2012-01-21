@@ -92,36 +92,48 @@ class __PyBackendComunicate(threading.Thread):
   def add_backet(self, dname, bdname, longitude, latitude, ttl, default=False):
     retval = True;
 
-    with g_rlock.writelock:
-      if not dname in g_root:
-        g_root[dname] = {};
+    if len(bdname) == 3:
+      with g_rlock.writelock:
+        if not dname in g_root:
+          g_root[dname] = {};
 
-      l_append_enable = True
-
-      if default:
-        for l_bname, l_bvalue in g_root[dname].iteritems():
-          if 'default' in l_bvalue and l_bvalue['default']:
-            l_append_enable = False;
-            break;
-
-      if l_append_enable:
-        g_root[dname][bdname] = {'longitude': longitude, 'latitude': latitude, 'ips': [], 'ttl': ttl};
+        l_append_enable = True
 
         if default:
-          g_root[dname][bdname]['default'] = True;
+          for l_bname, l_bvalue in g_root[dname].iteritems():
+            if 'default' in l_bvalue and l_bvalue['default']:
+              l_append_enable = False;
+              break;
 
-      else:
-        retval = False
+        if l_append_enable:
+          g_root[dname][bdname] = {'longitude': longitude, 'latitude': latitude, 'ips': [], 'ttl': ttl};
+
+          if default:
+            g_root[dname][bdname]['default'] = True;
+
+        else:
+          retval = False
+
+    else:
+      retval = False
 
     return retval
 
   def add_backet_ip(self, dname, bdname, ip):
     with g_rlock.writelock:
-      if not dname in g_root:
-        return False;
+      if bdname != "LB":
+        if not dname in g_root:
+          return False;
 
-      if not bdname in g_root[dname]:
-        return False;
+        if not bdname in g_root[dname]:
+          return False;
+
+      else:
+        if not dname in g_root:
+          g_root[dname] = {};
+
+        if not bdname in g_root[dname]:
+          g_root[dname][bdname] = {'ips': [], 'ttl': 60};
 
       if not ip in g_root[dname][bdname]['ips']:
         g_root[dname][bdname]['ips'].append(ip);
