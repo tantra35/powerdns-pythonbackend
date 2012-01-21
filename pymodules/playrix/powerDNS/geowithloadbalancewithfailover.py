@@ -42,22 +42,24 @@ class backend:
 
   def list(self, qtype, qdomain, dnspkt, domain_id):
     self.__m_loger.debug("call from remote addr: " + dnspkt.getRemote());
-    l_domain_backets = self.__getdata();
+    l_domains = self.__getdata();
 
     l_qtypeCode = qtype.getCode();
     l_lookup_responce = [];
     l_lqdomain = qdomain.lower();
 
-    if l_lqdomain in l_domain_backets:
+    if l_lqdomain in l_domains:
       if l_qtypeCode == QType.ANY or l_qtypeCode == QType.A:
+        l_domain = l_domains[l_lqdomain];
+        l_backets = l_domain['backets'];
+
         l_distance = 0xffffffff;
         l_nearest_backet = None;
+        l_default_backet = None;
+        l_withip_backet = None;
 
         l_ip_record = self.__m_geo.record_by_addr(dnspkt.getRemote());
         l_ip_point = l_ip_record;
-        l_backets = l_domain_backets[l_lqdomain];
-        l_default_backet = None;
-        l_withip_backet = None;
 
         for l_bname, l_bvalue in l_backets.iteritems():
           ll_distance = self.__distance(l_bvalue, l_ip_point);
@@ -81,6 +83,6 @@ class backend:
 
         if l_nearest_backet:
           for l_ip in l_nearest_backet['ips']:
-            l_lookup_responce.append({'type': QType.A, 'content': l_ip, 'qname': qdomain, 'ttl': l_nearest_backet['ttl']});
+            l_lookup_responce.append({'type': QType.A, 'content': l_ip, 'qname': qdomain, 'ttl': l_domain['ttl']});
 
     return l_lookup_responce;

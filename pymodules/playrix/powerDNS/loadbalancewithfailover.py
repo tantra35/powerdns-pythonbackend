@@ -21,17 +21,20 @@ class backend:
     return retval;
 
   def list(self, qtype, qdomain, dnspkt, domain_id):
-    l_domain_backets = self.__getdata();
+    l_domains = self.__getdata();
 
     l_qtypeCode = qtype.getCode();
     l_lookup_responce = [];
     l_lqdomain = qdomain.lower();
 
-    if l_lqdomain in l_domain_backets:
-      if 'LB' in l_domain_backets[l_lqdomain]:
-        l_backet = l_domain_backets[l_lqdomain]['LB'];
+    if l_lqdomain in l_domains:
+      l_domain = l_domains[l_lqdomain];
+      l_backets = l_domain['backets'];
+
+      if 'LB' in l_backets:
+        l_backet = l_backets['LB'];
 
         for l_ip in l_backet['ips']:
-          l_lookup_responce.append({'type': QType.A, 'content': l_ip, 'qname': qdomain, 'ttl': l_backet['ttl']});
+          l_lookup_responce.append({'type': QType.A, 'content': l_ip, 'qname': qdomain, 'ttl': l_domain['ttl']});
 
     return l_lookup_responce;
