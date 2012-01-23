@@ -3,6 +3,7 @@
 
 #include <pdns/misc.hh>
 #include <pdns/lock.hh>
+#include <pystring.h>
 
 #include "pythonbackend.hh"
 #include "BorrowRefCount.h"
@@ -35,6 +36,9 @@ PythonBackendFactory::PythonBackendFactory() : BackendFactory("python")
 	{
 		Py_Initialize();
 		PyEval_InitThreads();
+
+		//говорим использовать оптимизирующий компилятор
+		Py_OptimizeFlag = 1;
 
 		//регистрация новых типов
 		PyType_Ready(&PyDNSPacketType);
@@ -87,7 +91,7 @@ PythonBackend::PythonBackend(const string &suffix)
 	if(!getArg("class").empty())
 	{
 		vector<string> l_pythonclassparts;
-		stringtok(l_pythonclassparts, getArg("class"), ".");
+		pystring::rsplit(getArg("class"), l_pythonclassparts, ".", 1);
 
 		if(l_pythonclassparts.size() == 2)
 		{
@@ -118,13 +122,13 @@ PythonBackend::PythonBackend(const string &suffix)
 							l_exeptiontextstream << PyString_AsString(ll_ptype) << " : " << PyString_AsString(ll_pvalue);
 
 							L << Logger::Error << logprefix << "Can't instantiate class '" << l_s_class << "' due '" << l_exeptiontextstream.str() << "'" << endl;
-							throw new AhuException(l_exeptiontextstream.str());
+							throw AhuException(l_exeptiontextstream.str());
 						};
 					}
 					else
 					{
 						L << Logger::Error << logprefix << l_s_class << " is not class object. or not a class of new style i.e. not derived from object" << endl;
-						throw new AhuException("Wrong class config param");
+						throw AhuException("Wrong class config param");
 					};
 				}
 				else
@@ -139,7 +143,7 @@ PythonBackend::PythonBackend(const string &suffix)
 					l_exeptiontextstream << PyString_AsString(ll_ptype) << " : " << PyString_AsString(ll_pvalue);
 
 					L << Logger::Error << logprefix << "Can't get class '" << l_s_class << "' due '" << l_exeptiontextstream.str() << "'" << endl;
-					throw new AhuException("Wrong class config param");
+					throw AhuException("Wrong class config param");
 				};
 			}
 			else
@@ -154,19 +158,19 @@ PythonBackend::PythonBackend(const string &suffix)
 				l_exeptiontextstream << PyString_AsString(ll_ptype) << " : " << PyString_AsString(ll_pvalue);
 
 				L << Logger::Error << logprefix << "Can't import module '" << l_s_module << "' due '" << l_exeptiontextstream.str() << "'" << endl;
-				throw new AhuException("Wrong class config param");
+				throw AhuException("Wrong class config param");
 			};
 		}
 		else
 		{
 			L << Logger::Error << logprefix << "Wrong class config param" << endl; 
-			throw new AhuException("Wrong class config param");
+			throw AhuException("Wrong class config param");
 		};
 	}
 	else
 	{
 		L << Logger::Error << logprefix << "You do not provide class config parameter" << endl; 
-		throw new AhuException("You do not provide class config parameter");
+		throw AhuException("You do not provide class config parameter");
 	};
 };
 
