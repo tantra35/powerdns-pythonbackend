@@ -69,11 +69,10 @@ class backend:
     l_qtypeCode = qtype.getCode();
     l_lookup_responce = [];
     self.__m_lookup_iter = None;
-    l_lqdomain = qdomain.lower();
 
-    if l_lqdomain in self.__m_qdomains:
-      self.__m_loger.debug("request results for domain: " + l_lqdomain)
-      l_qdomaindata = self.__m_qdomains[l_lqdomain];
+    if qdomain in self.__m_qdomains:
+      self.__m_loger.debug("request results for domain: " + qdomain)
+      l_qdomaindata = self.__m_qdomains[qdomain];
 
       if l_qtypeCode == QType.NS or l_qtypeCode == QType.ANY:
         if 'NS' in l_qdomaindata:
@@ -101,7 +100,7 @@ class backend:
     self.__m_lookup_responce_iter = None;
     retval = False;
 
-    for l_lqdomain, l_qdomaindata in self.__m_qdomains.iteritems():
+    for l_qdomain, l_qdomaindata in self.__m_qdomains.iteritems():
       for l_rrname, ll_qdomaindata in l_qdomaindata.iteritems():
         if l_rrname != 'SOA':
           for l_rrecord in ll_qdomaindata:
