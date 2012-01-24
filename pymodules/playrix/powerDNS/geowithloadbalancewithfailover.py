@@ -41,7 +41,7 @@ class backend:
 
 
   def list(self, qtype, qdomain, dnspkt, domain_id):
-    self.__m_loger.debug("call from remote addr: " + dnspkt.getRemote());
+    self.__m_loger.info("call from remote addr: " + dnspkt.getRemote());
     l_domains = self.__getdata();
 
     l_qtypeCode = qtype.getCode();
