@@ -41,7 +41,6 @@ class backend:
 
 
   def list(self, qtype, qdomain, dnspkt, domain_id):
-    self.__m_loger.info("call from remote addr: " + dnspkt.getRemote());
     l_domains = self.__getdata();
 
     l_qtypeCode = qtype.getCode();
@@ -82,7 +81,12 @@ class backend:
             l_nearest_backet = l_default_backet;
 
         if l_nearest_backet:
+          self.__m_loger.info("for client ip " + dnspkt.getRemote() + " find backet " + l_nearest_backet["name"]);
+
           for l_ip in l_nearest_backet['ips']:
             l_lookup_responce.append({'type': QType.A, 'content': l_ip, 'qname': qdomain, 'ttl': l_domain['ttl']});
+
+        else:
+          self.__m_loger.error("can't find any backet for client ip " + dnspkt.getRemote());
 
     return l_lookup_responce;
