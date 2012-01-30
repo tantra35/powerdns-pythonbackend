@@ -129,7 +129,7 @@ class __PyBackendComunicate(threading.Thread):
                 break;
 
           if l_append_enable:
-            l_backets[bdname] = {'longitude': longitude, 'latitude': latitude, 'ips': []};
+            l_backets[bdname] = {'name': bdname, 'longitude': longitude, 'latitude': latitude, 'ips': []};
 
             if default:
               l_backets[bdname]['default'] = True;
@@ -174,7 +174,7 @@ class __PyBackendComunicate(threading.Thread):
 
       else:
         if not bdname in l_backets:
-          l_backets[bdname] = {'ips': []};
+          l_backets[bdname] = {'name': bdname, 'ips': []};
 
       if not ip in l_backets[bdname]['ips']:
         l_backets[bdname]['ips'].append(ip);
