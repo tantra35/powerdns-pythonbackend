@@ -89,27 +89,53 @@ g_rlock = __ReadWriteLock()
 g_root = {};
 
 class __PyBackendComunicate(threading.Thread):
-  def add_backet(self, dname, bdname, longitude, latitude, ttl, default=False):
+  def add_domain(self, dname, ttl):
+    retval = True;
+
+    with g_rlock.writelock:
+      if not dname in g_root:
+        g_root[dname] = {'ttl': ttl, 'backets': {}};
+
+      else:
+        retval = False;
+
+    return retval
+
+  def rmv_domain(self, dname):
+    retval = True;
+
+    with g_rlock.writelock:
+      if dname in g_root:
+        del g_root[dname]
+
+      else:
+        retval = False;
+
+    return retval
+
+  def add_domain_backet(self, dname, bdname, longitude, latitude, default=False):
     retval = True;
 
     if len(bdname) == 3:
       with g_rlock.writelock:
-        if not dname in g_root:
-          g_root[dname] = {};
-
-        l_append_enable = True
-
-        if default:
-          for l_bname, l_bvalue in g_root[dname].iteritems():
-            if 'default' in l_bvalue and l_bvalue['default']:
-              l_append_enable = False;
-              break;
-
-        if l_append_enable:
-          g_root[dname][bdname] = {'longitude': longitude, 'latitude': latitude, 'ips': [], 'ttl': ttl};
+        if dname in g_root:
+          l_append_enable = True
+          l_backets = g_root[dname]['backets'];
 
           if default:
-            g_root[dname][bdname]['default'] = True;
+            for l_bname, l_bvalue in l_backets.iteritems():
+              if 'default' in l_bvalue and l_bvalue['default']:
+                l_append_enable = False;
+                break;
+
+          if l_append_enable:
+            l_backets[bdname] = {'longitude': longitude, 'latitude': latitude, 'ips': []};
+
+            if default:
+              l_backets[bdname]['default'] = True;
+
+          else:
+            retval = False
 
         else:
           retval = False
@@ -119,42 +145,59 @@ class __PyBackendComunicate(threading.Thread):
 
     return retval
 
-  def add_backet_ip(self, dname, bdname, ip):
-    with g_rlock.writelock:
-      if bdname != "LB":
-        if not dname in g_root:
-          return False;
+  def rmv_domain_backet(self, dname, bdname):
+    retval = True;
 
-        if not bdname in g_root[dname]:
+    with g_rlock.writelock:
+      if dname in g_root:
+        if bdname in g_root[dname]:
+          del g_root[dname][bdname];
+
+        else:
+          retval = False
+
+      else:
+        retval = False
+
+    return retval;
+
+  def add_domain_backet_ip(self, dname, bdname, ip):
+    with g_rlock.writelock:
+      if not dname in g_root:
+        return False;
+
+      l_backets = g_root[dname]['backets'];
+
+      if bdname != "LB":
+        if not bdname in l_backets:
           return False;
 
       else:
-        if not dname in g_root:
-          g_root[dname] = {};
+        if not bdname in l_backets:
+          l_backets[bdname] = {'ips': []};
 
-        if not bdname in g_root[dname]:
-          g_root[dname][bdname] = {'ips': [], 'ttl': 60};
-
-      if not ip in g_root[dname][bdname]['ips']:
-        g_root[dname][bdname]['ips'].append(ip);
+      if not ip in l_backets[bdname]['ips']:
+        l_backets[bdname]['ips'].append(ip);
 
       else:
         return False;
 
     return True
 
-  def rmv_backet_ip(self, dname, bdname, ip):
+  def rmv_domain_backet_ip(self, dname, bdname, ip):
     with g_rlock.writelock:
       if not dname in g_root:
         return False;
 
-      if not bdname in g_root[dname]:
+      l_backets = g_root[dname]['backets'];
+
+      if not bdname in l_backets:
         return False;
 
-      if not ip in g_root[dname][bdname]['ips']:
+      if not ip in l_backets[bdname]['ips']:
         return False;
 
-      g_root[dname][bdname]['ips'].remove(ip);
+      l_backets[bdname]['ips'].remove(ip);
 
     return True
 

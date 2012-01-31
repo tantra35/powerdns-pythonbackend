@@ -30,7 +30,7 @@ service BackendComunicateProxy
 	bool add_domain(1: string dname, 2: i32 ttl);
 	bool rmv_domain(1: string dname);
 	bool add_domain_backet(1: string dname, 2: string bdname, 3: double longitude, 4: double latitude, 5: bool isdefault=false);
-	bool rmv_domain_backet(1: string dname);
-	bool add_domain_ip(1: string dname, 2: string bdname, 3: string ip);
-	bool rmv_domain_ip(1: string dname, 2: string bdname, 3: string ip);
+	bool rmv_domain_backet(1: string dname, 2: string bdname);
+	bool add_domain_backet_ip(1: string dname, 2: string bdname, 3: string ip);
+	bool rmv_domain_backet_ip(1: string dname, 2: string bdname, 3: string ip);
 }

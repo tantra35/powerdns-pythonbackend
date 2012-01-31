@@ -17,19 +17,41 @@ except:
 
 
 class Iface(object):
-  def add_backet(self, dname, bdname, longitude, latitude, ttl, isdefault):
+  def add_domain(self, dname, ttl):
+    """
+    Parameters:
+     - dname
+     - ttl
+    """
+    pass
+
+  def rmv_domain(self, dname):
+    """
+    Parameters:
+     - dname
+    """
+    pass
+
+  def add_domain_backet(self, dname, bdname, longitude, latitude, isdefault):
     """
     Parameters:
      - dname
      - bdname
      - longitude
      - latitude
-     - ttl
      - isdefault
     """
     pass
 
-  def add_backet_ip(self, dname, bdname, ip):
+  def rmv_domain_backet(self, dname, bdname):
+    """
+    Parameters:
+     - dname
+     - bdname
+    """
+    pass
+
+  def add_domain_backet_ip(self, dname, bdname, ip):
     """
     Parameters:
      - dname
@@ -38,7 +60,7 @@ class Iface(object):
     """
     pass
 
-  def rmv_backet_ip(self, dname, bdname, ip):
+  def rmv_domain_backet_ip(self, dname, bdname, ip):
     """
     Parameters:
      - dname
@@ -55,59 +77,151 @@ class Client(Iface):
       self._oprot = oprot
     self._seqid = 0
 
-  def add_backet(self, dname, bdname, longitude, latitude, ttl, isdefault):
+  def add_domain(self, dname, ttl):
+    """
+    Parameters:
+     - dname
+     - ttl
+    """
+    self.send_add_domain(dname, ttl)
+    return self.recv_add_domain()
+
+  def send_add_domain(self, dname, ttl):
+    self._oprot.writeMessageBegin('add_domain', TMessageType.CALL, self._seqid)
+    args = add_domain_args()
+    args.dname = dname
+    args.ttl = ttl
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_add_domain(self, ):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = add_domain_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "add_domain failed: unknown result");
+
+  def rmv_domain(self, dname):
+    """
+    Parameters:
+     - dname
+    """
+    self.send_rmv_domain(dname)
+    return self.recv_rmv_domain()
+
+  def send_rmv_domain(self, dname):
+    self._oprot.writeMessageBegin('rmv_domain', TMessageType.CALL, self._seqid)
+    args = rmv_domain_args()
+    args.dname = dname
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_rmv_domain(self, ):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = rmv_domain_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "rmv_domain failed: unknown result");
+
+  def add_domain_backet(self, dname, bdname, longitude, latitude, isdefault):
     """
     Parameters:
      - dname
      - bdname
      - longitude
      - latitude
-     - ttl
      - isdefault
     """
-    self.send_add_backet(dname, bdname, longitude, latitude, ttl, isdefault)
-    return self.recv_add_backet()
+    self.send_add_domain_backet(dname, bdname, longitude, latitude, isdefault)
+    return self.recv_add_domain_backet()
 
-  def send_add_backet(self, dname, bdname, longitude, latitude, ttl, isdefault):
-    self._oprot.writeMessageBegin('add_backet', TMessageType.CALL, self._seqid)
-    args = add_backet_args()
+  def send_add_domain_backet(self, dname, bdname, longitude, latitude, isdefault):
+    self._oprot.writeMessageBegin('add_domain_backet', TMessageType.CALL, self._seqid)
+    args = add_domain_backet_args()
     args.dname = dname
     args.bdname = bdname
     args.longitude = longitude
     args.latitude = latitude
-    args.ttl = ttl
     args.isdefault = isdefault
     args.write(self._oprot)
     self._oprot.writeMessageEnd()
     self._oprot.trans.flush()
 
-  def recv_add_backet(self, ):
+  def recv_add_domain_backet(self, ):
     (fname, mtype, rseqid) = self._iprot.readMessageBegin()
     if mtype == TMessageType.EXCEPTION:
       x = TApplicationException()
       x.read(self._iprot)
       self._iprot.readMessageEnd()
       raise x
-    result = add_backet_result()
+    result = add_domain_backet_result()
     result.read(self._iprot)
     self._iprot.readMessageEnd()
     if result.success is not None:
       return result.success
-    raise TApplicationException(TApplicationException.MISSING_RESULT, "add_backet failed: unknown result");
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "add_domain_backet failed: unknown result");
 
-  def add_backet_ip(self, dname, bdname, ip):
+  def rmv_domain_backet(self, dname, bdname):
+    """
+    Parameters:
+     - dname
+     - bdname
+    """
+    self.send_rmv_domain_backet(dname, bdname)
+    return self.recv_rmv_domain_backet()
+
+  def send_rmv_domain_backet(self, dname, bdname):
+    self._oprot.writeMessageBegin('rmv_domain_backet', TMessageType.CALL, self._seqid)
+    args = rmv_domain_backet_args()
+    args.dname = dname
+    args.bdname = bdname
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_rmv_domain_backet(self, ):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = rmv_domain_backet_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "rmv_domain_backet failed: unknown result");
+
+  def add_domain_backet_ip(self, dname, bdname, ip):
     """
     Parameters:
      - dname
      - bdname
      - ip
     """
-    self.send_add_backet_ip(dname, bdname, ip)
-    return self.recv_add_backet_ip()
+    self.send_add_domain_backet_ip(dname, bdname, ip)
+    return self.recv_add_domain_backet_ip()
 
-  def send_add_backet_ip(self, dname, bdname, ip):
-    self._oprot.writeMessageBegin('add_backet_ip', TMessageType.CALL, self._seqid)
-    args = add_backet_ip_args()
+  def send_add_domain_backet_ip(self, dname, bdname, ip):
+    self._oprot.writeMessageBegin('add_domain_backet_ip', TMessageType.CALL, self._seqid)
+    args = add_domain_backet_ip_args()
     args.dname = dname
     args.bdname = bdname
     args.ip = ip
@@ -115,33 +229,33 @@ class Client(Iface):
     self._oprot.writeMessageEnd()
     self._oprot.trans.flush()
 
-  def recv_add_backet_ip(self, ):
+  def recv_add_domain_backet_ip(self, ):
     (fname, mtype, rseqid) = self._iprot.readMessageBegin()
     if mtype == TMessageType.EXCEPTION:
       x = TApplicationException()
       x.read(self._iprot)
       self._iprot.readMessageEnd()
       raise x
-    result = add_backet_ip_result()
+    result = add_domain_backet_ip_result()
     result.read(self._iprot)
     self._iprot.readMessageEnd()
     if result.success is not None:
       return result.success
-    raise TApplicationException(TApplicationException.MISSING_RESULT, "add_backet_ip failed: unknown result");
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "add_domain_backet_ip failed: unknown result");
 
-  def rmv_backet_ip(self, dname, bdname, ip):
+  def rmv_domain_backet_ip(self, dname, bdname, ip):
     """
     Parameters:
      - dname
      - bdname
      - ip
     """
-    self.send_rmv_backet_ip(dname, bdname, ip)
-    return self.recv_rmv_backet_ip()
+    self.send_rmv_domain_backet_ip(dname, bdname, ip)
+    return self.recv_rmv_domain_backet_ip()
 
-  def send_rmv_backet_ip(self, dname, bdname, ip):
-    self._oprot.writeMessageBegin('rmv_backet_ip', TMessageType.CALL, self._seqid)
-    args = rmv_backet_ip_args()
+  def send_rmv_domain_backet_ip(self, dname, bdname, ip):
+    self._oprot.writeMessageBegin('rmv_domain_backet_ip', TMessageType.CALL, self._seqid)
+    args = rmv_domain_backet_ip_args()
     args.dname = dname
     args.bdname = bdname
     args.ip = ip
@@ -149,28 +263,31 @@ class Client(Iface):
     self._oprot.writeMessageEnd()
     self._oprot.trans.flush()
 
-  def recv_rmv_backet_ip(self, ):
+  def recv_rmv_domain_backet_ip(self, ):
     (fname, mtype, rseqid) = self._iprot.readMessageBegin()
     if mtype == TMessageType.EXCEPTION:
       x = TApplicationException()
       x.read(self._iprot)
       self._iprot.readMessageEnd()
       raise x
-    result = rmv_backet_ip_result()
+    result = rmv_domain_backet_ip_result()
     result.read(self._iprot)
     self._iprot.readMessageEnd()
     if result.success is not None:
       return result.success
-    raise TApplicationException(TApplicationException.MISSING_RESULT, "rmv_backet_ip failed: unknown result");
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "rmv_domain_backet_ip failed: unknown result");
 
 
 class Processor(Iface, TProcessor):
   def __init__(self, handler):
     self._handler = handler
     self._processMap = {}
-    self._processMap["add_backet"] = Processor.process_add_backet
-    self._processMap["add_backet_ip"] = Processor.process_add_backet_ip
-    self._processMap["rmv_backet_ip"] = Processor.process_rmv_backet_ip
+    self._processMap["add_domain"] = Processor.process_add_domain
+    self._processMap["rmv_domain"] = Processor.process_rmv_domain
+    self._processMap["add_domain_backet"] = Processor.process_add_domain_backet
+    self._processMap["rmv_domain_backet"] = Processor.process_rmv_domain_backet
+    self._processMap["add_domain_backet_ip"] = Processor.process_add_domain_backet_ip
+    self._processMap["rmv_domain_backet_ip"] = Processor.process_rmv_domain_backet_ip
 
   def process(self, iprot, oprot):
     (name, type, seqid) = iprot.readMessageBegin()
@@ -187,35 +304,68 @@ class Processor(Iface, TProcessor):
       self._processMap[name](self, seqid, iprot, oprot)
     return True
 
-  def process_add_backet(self, seqid, iprot, oprot):
-    args = add_backet_args()
+  def process_add_domain(self, seqid, iprot, oprot):
+    args = add_domain_args()
     args.read(iprot)
     iprot.readMessageEnd()
-    result = add_backet_result()
-    result.success = self._handler.add_backet(args.dname, args.bdname, args.longitude, args.latitude, args.ttl, args.isdefault)
-    oprot.writeMessageBegin("add_backet", TMessageType.REPLY, seqid)
+    result = add_domain_result()
+    result.success = self._handler.add_domain(args.dname, args.ttl)
+    oprot.writeMessageBegin("add_domain", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
     oprot.trans.flush()
 
-  def process_add_backet_ip(self, seqid, iprot, oprot):
-    args = add_backet_ip_args()
+  def process_rmv_domain(self, seqid, iprot, oprot):
+    args = rmv_domain_args()
     args.read(iprot)
     iprot.readMessageEnd()
-    result = add_backet_ip_result()
-    result.success = self._handler.add_backet_ip(args.dname, args.bdname, args.ip)
-    oprot.writeMessageBegin("add_backet_ip", TMessageType.REPLY, seqid)
+    result = rmv_domain_result()
+    result.success = self._handler.rmv_domain(args.dname)
+    oprot.writeMessageBegin("rmv_domain", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
     oprot.trans.flush()
 
-  def process_rmv_backet_ip(self, seqid, iprot, oprot):
-    args = rmv_backet_ip_args()
+  def process_add_domain_backet(self, seqid, iprot, oprot):
+    args = add_domain_backet_args()
     args.read(iprot)
     iprot.readMessageEnd()
-    result = rmv_backet_ip_result()
-    result.success = self._handler.rmv_backet_ip(args.dname, args.bdname, args.ip)
-    oprot.writeMessageBegin("rmv_backet_ip", TMessageType.REPLY, seqid)
+    result = add_domain_backet_result()
+    result.success = self._handler.add_domain_backet(args.dname, args.bdname, args.longitude, args.latitude, args.isdefault)
+    oprot.writeMessageBegin("add_domain_backet", TMessageType.REPLY, seqid)
+    result.write(oprot)
+    oprot.writeMessageEnd()
+    oprot.trans.flush()
+
+  def process_rmv_domain_backet(self, seqid, iprot, oprot):
+    args = rmv_domain_backet_args()
+    args.read(iprot)
+    iprot.readMessageEnd()
+    result = rmv_domain_backet_result()
+    result.success = self._handler.rmv_domain_backet(args.dname, args.bdname)
+    oprot.writeMessageBegin("rmv_domain_backet", TMessageType.REPLY, seqid)
+    result.write(oprot)
+    oprot.writeMessageEnd()
+    oprot.trans.flush()
+
+  def process_add_domain_backet_ip(self, seqid, iprot, oprot):
+    args = add_domain_backet_ip_args()
+    args.read(iprot)
+    iprot.readMessageEnd()
+    result = add_domain_backet_ip_result()
+    result.success = self._handler.add_domain_backet_ip(args.dname, args.bdname, args.ip)
+    oprot.writeMessageBegin("add_domain_backet_ip", TMessageType.REPLY, seqid)
+    result.write(oprot)
+    oprot.writeMessageEnd()
+    oprot.trans.flush()
+
+  def process_rmv_domain_backet_ip(self, seqid, iprot, oprot):
+    args = rmv_domain_backet_ip_args()
+    args.read(iprot)
+    iprot.readMessageEnd()
+    result = rmv_domain_backet_ip_result()
+    result.success = self._handler.rmv_domain_backet_ip(args.dname, args.bdname, args.ip)
+    oprot.writeMessageBegin("rmv_domain_backet_ip", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
     oprot.trans.flush()
@@ -223,14 +373,263 @@ class Processor(Iface, TProcessor):
 
 # HELPER FUNCTIONS AND STRUCTURES
 
-class add_backet_args(object):
+class add_domain_args(object):
+  """
+  Attributes:
+   - dname
+   - ttl
+  """
+
+  thrift_spec = (
+    None, # 0
+    (1, TType.STRING, 'dname', None, None, ), # 1
+    (2, TType.I32, 'ttl', None, None, ), # 2
+  )
+
+  def __init__(self, dname=None, ttl=None,):
+    self.dname = dname
+    self.ttl = ttl
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 1:
+        if ftype == TType.STRING:
+          self.dname = iprot.readString();
+        else:
+          iprot.skip(ftype)
+      elif fid == 2:
+        if ftype == TType.I32:
+          self.ttl = iprot.readI32();
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('add_domain_args')
+    if self.dname is not None:
+      oprot.writeFieldBegin('dname', TType.STRING, 1)
+      oprot.writeString(self.dname)
+      oprot.writeFieldEnd()
+    if self.ttl is not None:
+      oprot.writeFieldBegin('ttl', TType.I32, 2)
+      oprot.writeI32(self.ttl)
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class add_domain_result(object):
+  """
+  Attributes:
+   - success
+  """
+
+  thrift_spec = (
+    (0, TType.BOOL, 'success', None, None, ), # 0
+  )
+
+  def __init__(self, success=None,):
+    self.success = success
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 0:
+        if ftype == TType.BOOL:
+          self.success = iprot.readBool();
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('add_domain_result')
+    if self.success is not None:
+      oprot.writeFieldBegin('success', TType.BOOL, 0)
+      oprot.writeBool(self.success)
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class rmv_domain_args(object):
+  """
+  Attributes:
+   - dname
+  """
+
+  thrift_spec = (
+    None, # 0
+    (1, TType.STRING, 'dname', None, None, ), # 1
+  )
+
+  def __init__(self, dname=None,):
+    self.dname = dname
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 1:
+        if ftype == TType.STRING:
+          self.dname = iprot.readString();
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('rmv_domain_args')
+    if self.dname is not None:
+      oprot.writeFieldBegin('dname', TType.STRING, 1)
+      oprot.writeString(self.dname)
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class rmv_domain_result(object):
+  """
+  Attributes:
+   - success
+  """
+
+  thrift_spec = (
+    (0, TType.BOOL, 'success', None, None, ), # 0
+  )
+
+  def __init__(self, success=None,):
+    self.success = success
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 0:
+        if ftype == TType.BOOL:
+          self.success = iprot.readBool();
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('rmv_domain_result')
+    if self.success is not None:
+      oprot.writeFieldBegin('success', TType.BOOL, 0)
+      oprot.writeBool(self.success)
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class add_domain_backet_args(object):
   """
   Attributes:
    - dname
    - bdname
    - longitude
    - latitude
-   - ttl
    - isdefault
   """
 
@@ -240,16 +639,14 @@ class add_backet_args(object):
     (2, TType.STRING, 'bdname', None, None, ), # 2
     (3, TType.DOUBLE, 'longitude', None, None, ), # 3
     (4, TType.DOUBLE, 'latitude', None, None, ), # 4
-    (5, TType.I32, 'ttl', None, None, ), # 5
-    (6, TType.BOOL, 'isdefault', None, False, ), # 6
+    (5, TType.BOOL, 'isdefault', None, False, ), # 5
   )
 
-  def __init__(self, dname=None, bdname=None, longitude=None, latitude=None, ttl=None, isdefault=thrift_spec[6][4],):
+  def __init__(self, dname=None, bdname=None, longitude=None, latitude=None, isdefault=thrift_spec[5][4],):
     self.dname = dname
     self.bdname = bdname
     self.longitude = longitude
     self.latitude = latitude
-    self.ttl = ttl
     self.isdefault = isdefault
 
   def read(self, iprot):
@@ -282,11 +679,6 @@ class add_backet_args(object):
         else:
           iprot.skip(ftype)
       elif fid == 5:
-        if ftype == TType.I32:
-          self.ttl = iprot.readI32();
-        else:
-          iprot.skip(ftype)
-      elif fid == 6:
         if ftype == TType.BOOL:
           self.isdefault = iprot.readBool();
         else:
@@ -300,7 +692,7 @@ class add_backet_args(object):
     if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
-    oprot.writeStructBegin('add_backet_args')
+    oprot.writeStructBegin('add_domain_backet_args')
     if self.dname is not None:
       oprot.writeFieldBegin('dname', TType.STRING, 1)
       oprot.writeString(self.dname)
@@ -317,12 +709,8 @@ class add_backet_args(object):
       oprot.writeFieldBegin('latitude', TType.DOUBLE, 4)
       oprot.writeDouble(self.latitude)
       oprot.writeFieldEnd()
-    if self.ttl is not None:
-      oprot.writeFieldBegin('ttl', TType.I32, 5)
-      oprot.writeI32(self.ttl)
-      oprot.writeFieldEnd()
     if self.isdefault is not None:
-      oprot.writeFieldBegin('isdefault', TType.BOOL, 6)
+      oprot.writeFieldBegin('isdefault', TType.BOOL, 5)
       oprot.writeBool(self.isdefault)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
@@ -343,7 +731,7 @@ class add_backet_args(object):
   def __ne__(self, other):
     return not (self == other)
 
-class add_backet_result(object):
+class add_domain_backet_result(object):
   """
   Attributes:
    - success
@@ -379,7 +767,7 @@ class add_backet_result(object):
     if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
-    oprot.writeStructBegin('add_backet_result')
+    oprot.writeStructBegin('add_domain_backet_result')
     if self.success is not None:
       oprot.writeFieldBegin('success', TType.BOOL, 0)
       oprot.writeBool(self.success)
@@ -402,7 +790,138 @@ class add_backet_result(object):
   def __ne__(self, other):
     return not (self == other)
 
-class add_backet_ip_args(object):
+class rmv_domain_backet_args(object):
+  """
+  Attributes:
+   - dname
+   - bdname
+  """
+
+  thrift_spec = (
+    None, # 0
+    (1, TType.STRING, 'dname', None, None, ), # 1
+    (2, TType.STRING, 'bdname', None, None, ), # 2
+  )
+
+  def __init__(self, dname=None, bdname=None,):
+    self.dname = dname
+    self.bdname = bdname
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 1:
+        if ftype == TType.STRING:
+          self.dname = iprot.readString();
+        else:
+          iprot.skip(ftype)
+      elif fid == 2:
+        if ftype == TType.STRING:
+          self.bdname = iprot.readString();
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('rmv_domain_backet_args')
+    if self.dname is not None:
+      oprot.writeFieldBegin('dname', TType.STRING, 1)
+      oprot.writeString(self.dname)
+      oprot.writeFieldEnd()
+    if self.bdname is not None:
+      oprot.writeFieldBegin('bdname', TType.STRING, 2)
+      oprot.writeString(self.bdname)
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class rmv_domain_backet_result(object):
+  """
+  Attributes:
+   - success
+  """
+
+  thrift_spec = (
+    (0, TType.BOOL, 'success', None, None, ), # 0
+  )
+
+  def __init__(self, success=None,):
+    self.success = success
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 0:
+        if ftype == TType.BOOL:
+          self.success = iprot.readBool();
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('rmv_domain_backet_result')
+    if self.success is not None:
+      oprot.writeFieldBegin('success', TType.BOOL, 0)
+      oprot.writeBool(self.success)
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class add_domain_backet_ip_args(object):
   """
   Attributes:
    - dname
@@ -455,7 +974,7 @@ class add_backet_ip_args(object):
     if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
-    oprot.writeStructBegin('add_backet_ip_args')
+    oprot.writeStructBegin('add_domain_backet_ip_args')
     if self.dname is not None:
       oprot.writeFieldBegin('dname', TType.STRING, 1)
       oprot.writeString(self.dname)
@@ -486,7 +1005,7 @@ class add_backet_ip_args(object):
   def __ne__(self, other):
     return not (self == other)
 
-class add_backet_ip_result(object):
+class add_domain_backet_ip_result(object):
   """
   Attributes:
    - success
@@ -522,7 +1041,7 @@ class add_backet_ip_result(object):
     if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
-    oprot.writeStructBegin('add_backet_ip_result')
+    oprot.writeStructBegin('add_domain_backet_ip_result')
     if self.success is not None:
       oprot.writeFieldBegin('success', TType.BOOL, 0)
       oprot.writeBool(self.success)
@@ -545,7 +1064,7 @@ class add_backet_ip_result(object):
   def __ne__(self, other):
     return not (self == other)
 
-class rmv_backet_ip_args(object):
+class rmv_domain_backet_ip_args(object):
   """
   Attributes:
    - dname
@@ -598,7 +1117,7 @@ class rmv_backet_ip_args(object):
     if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
-    oprot.writeStructBegin('rmv_backet_ip_args')
+    oprot.writeStructBegin('rmv_domain_backet_ip_args')
     if self.dname is not None:
       oprot.writeFieldBegin('dname', TType.STRING, 1)
       oprot.writeString(self.dname)
@@ -629,7 +1148,7 @@ class rmv_backet_ip_args(object):
   def __ne__(self, other):
     return not (self == other)
 
-class rmv_backet_ip_result(object):
+class rmv_domain_backet_ip_result(object):
   """
   Attributes:
    - success
@@ -665,7 +1184,7 @@ class rmv_backet_ip_result(object):
     if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
-    oprot.writeStructBegin('rmv_backet_ip_result')
+    oprot.writeStructBegin('rmv_domain_backet_ip_result')
     if self.success is not None:
       oprot.writeFieldBegin('success', TType.BOOL, 0)
       oprot.writeBool(self.success)
