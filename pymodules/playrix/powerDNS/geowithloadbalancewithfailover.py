@@ -66,17 +66,17 @@ class backend:
             l_distance = ll_distance;
             l_nearest_backet = l_bvalue;
 
-          if not l_default_backet and ('default' in l_bvalue and l_bvalue['default']):
+          if not l_default_backet and len(l_bvalue['ips']) and ('default' in l_bvalue and l_bvalue['default']):
             l_default_backet = l_bvalue;
 
-          if not l_withip_backet and len(l_bvalue['ips']):
+          if l_withip_backet is None and len(l_bvalue['ips']):
             l_withip_backet = l_bvalue;
 
         else:
-          if not l_default_backet:
+          if l_default_backet is None:
             l_default_backet = l_withip_backet;
 
-          if not l_nearest_backet:
+          if l_nearest_backet is None:
             l_nearest_backet = l_default_backet;
 
         if l_nearest_backet:
