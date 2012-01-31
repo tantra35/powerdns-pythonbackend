@@ -119,7 +119,12 @@ try:
   __logfile = g_config.get('global', 'logfile')
   __level = __LEVELS[g_config.get('global', 'loglevel')]
 
-  logging.basicConfig(filename=__logfile, level=__level, format="%(asctime)s %(levelname)s %(name)s::%(funcName)s  %(message)s");
+  __root_logger = logging.getLogger('');
+  __root_logger_handler = __logging.handlers.TimedRotatingFileHandler(__logfile, 'midnight', 1);
+  __root_logger_handler.suffix = "%Y-%m-%d";
+
+  __root_logger.addHandler(__root_logger_handler);
+  logging.basicConfig(level=__level, format="%(asctime)s %(levelname)s %(name)s::%(funcName)s  %(message)s");
 
 except Exception as e:
   pass;
