@@ -7,7 +7,7 @@ int PyQTypeType___init__(CPyQType *self, PyObject *args, PyObject *kwds)
 
 	if(PyArg_ParseTuple(args, "O", &l_pp))
 	{
-		if(PyLong_Check(l_pp))
+		if(PyNumber_Check(l_pp))
 		{
 			self->qtype = PyLong_AsLong(l_pp);
 			retval = 0;

@@ -10,6 +10,8 @@
 #include <pthread.h>
 #include <Python.h>
 
+const static string logprefix = "[pythonbackend] "; 
+
 class PythonBackend : public DNSBackend
 {
 public:
@@ -23,7 +25,7 @@ public:
 
 private:
 	PyObject* __m_py_object;
-	pthread_mutex_t startup_lock;
+	static pthread_mutex_t startup_lock;
 };
 
 class PythonBackendFactory : public BackendFactory
@@ -40,8 +42,8 @@ public:
 	PythonBackendLoader()
 	{
 		BackendMakers().report(new PythonBackendFactory());
-		L << Logger::Info << "[PythonBackend] This is the pythonbackend ("__DATE__", "__TIME__" - $Revision: 1.1 $) reporting" << endl;
-	}
+		L << Logger::Info << logprefix << "This is the pythonbackend ("__DATE__", "__TIME__" - $Revision: 1.1 $) reporting" << endl;
+	};
 };
 
 static PythonBackendLoader pythonloader;
