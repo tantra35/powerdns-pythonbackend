@@ -37,4 +37,7 @@ class backend:
         for l_ip in l_backet['ips']:
           l_lookup_responce.append({'type': QType.A, 'content': l_ip, 'qname': qdomain, 'ttl': l_domain['ttl']});
 
+      else:
+        self.__m_loger.warning("no LB backet");
+
     return l_lookup_responce;

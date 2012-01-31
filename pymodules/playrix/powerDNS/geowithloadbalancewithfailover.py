@@ -87,6 +87,6 @@ class backend:
             l_lookup_responce.append({'type': QType.A, 'content': l_ip, 'qname': qdomain, 'ttl': l_domain['ttl']});
 
         else:
-          self.__m_loger.error("can't find any backet for client ip " + dnspkt.getRemote());
+          self.__m_loger.warning("can't find any backet for client ip " + dnspkt.getRemote());
 
     return l_lookup_responce;
