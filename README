@@ -1,6 +1,8 @@
 pythonbackend (embeded python into PowerDNS)
 ==========================================
 
-suported config options:
+suported config options (in pdns.conf):
 
 python-class=<full python class pass>
+
+<full python class pass> - full path tu class include package name i.e. module.submodule.class
