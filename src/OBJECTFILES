@@ -1,0 +1,1 @@
+PyDNSPacket.o PyDNSResourceRecord.o PyQType.o PySOAData.o PyGILLock.o pythonbackend.o PyDomainInfo.o
