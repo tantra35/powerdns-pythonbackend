@@ -3,6 +3,9 @@
 #include <pdns/misc.hh>
 #include <pdns/lock.hh>
 
+#include "pythonbackend.hh"
+#include "PyDNSPacket.hh"
+
 PythonBackend::PythonBackend()
 {
 	if(!Py_IsInitialized())
@@ -35,6 +38,16 @@ PythonBackend::~PythonBackend()
 	PyEval_AcquireLock();
 
 	Py_DECREF(__m_py_object);
+
+	PyEval_ReleaseLock();
+};
+
+void PythonBackend::lookup(const QType &qtype, const string &qdomain, DNSPacket *pkt_p=0, int zoneId=-1)
+{
+	PyEval_AcquireLock();
+
+	CPyDNSPacket* l_py_DNSPacket = PyObject_New(CPyDNSPacket, PyDNSPacketType);
+	PyObject_CallMethod(__m_py_object, "lookup", "", qtype, qdomain.c_str(), l_py_DNSPacket, zoneId);
 
 	PyEval_ReleaseLock();
 };
