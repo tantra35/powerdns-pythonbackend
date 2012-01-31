@@ -28,19 +28,9 @@ private:
 class PythonBackendFactory : public BackendFactory
 {
 public:
-	PythonBackendFactory() : BackendFactory("python")
-	{
-	}
-
-	void declareArguments(const string &suffix = "")
-	{
-		declare(suffix, "class", "python class to serve dns querys", "");
-	}
-
-	DNSBackend *make(const string &suffix)
-	{
-		return new PythonBackend(suffix);
-	}
+	PythonBackendFactory();
+	void declareArguments(const string &suffix = "");
+	DNSBackend *make(const string &suffix);
 };
 
 class PythonBackendLoader

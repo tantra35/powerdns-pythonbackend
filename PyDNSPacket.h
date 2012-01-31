@@ -1,23 +1,17 @@
-class CPyDNSPacket: public PyObject
+#include <python.h>
+
+struct CPyDNSPacket: public PyObject
 {
-public:
-	DNSPacket* __m_p;
+	DNSPacket* m_p;
+};
 
-	PyObject* getRemote()
-	{
-		return PyString_FromString(__m_p->getRemote().c_str());
-	};
-
-	PyObject* getRemotePort()
-	{
-		return PyLong_FromLong(__m_p->getRemotePort());
-	};
-}
+PyObject* PyDNSPacketType_methods_getRemote(CPyDNSPacket* self);
+PyObject* PyDNSPacketType_methods_getRemotePort(CPyDNSPacket* self);
 
 static PyMethodDef PyDNSPacketType_methods[] =
 {
-	{"getRemote", (PyCFunction)CPyDNSPacket::getRemote, METH_NOARGS, "get Requester Remote addr"},
-	{"getRemotePort", (PyCFunction)CPyDNSPacket::getRemotePort, METH_NOARGS, "get Requester Remote port"}}
+	{"getRemote", (PyCFunction)PyDNSPacketType_methods_getRemote, METH_NOARGS, "get Requester Remote addr"},
+	{"getRemotePort", (PyCFunction)PyDNSPacketType_methods_getRemotePort, METH_NOARGS, "get Requester Remote port"},
 	{NULL}  /* Sentinel */
 };
 
@@ -43,7 +37,7 @@ static PyTypeObject PyDNSPacketType =
     0,                                        /*tp_getattro*/
     0,                                        /*tp_setattro*/
     0,                                        /*tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
+    Py_TPFLAGS_DEFAULT,                       /*tp_flags*/
     "DNSPacket waraper",                      /* tp_doc */
     0,                                        /* tp_traverse */
     0,                                        /* tp_clear */
@@ -52,5 +46,4 @@ static PyTypeObject PyDNSPacketType =
     0,                                        /* tp_iter */
     0,                                        /* tp_iternext */
     PyDNSPacketType_methods,                  /* tp_methods */
-    0,                                        /* tp_members */
 };
