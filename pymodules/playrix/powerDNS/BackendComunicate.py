@@ -131,6 +131,21 @@ class __PyBackendComunicate(threading.Thread):
 
     return True
 
+  def rmv_backet_ip(self, dname, bdname, ip):
+    with g_rlock.writelock:
+      if not dname in g_root:
+        return False;
+
+      if not bdname in g_root[dname]:
+        return False;
+
+      if not ip in g_root[dname][bdname]['ips']:
+        return False;
+
+      g_root[dname][bdname]['ips'].remove(ip);
+
+    return True
+
   def run(self):
     try:
       transport = TSocket.TServerSocket("localhost", 9160);
