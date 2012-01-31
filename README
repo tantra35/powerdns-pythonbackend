@@ -1,3 +1,6 @@
-pythonbackend (embed python into PowerDNS)
+pythonbackend (embeded python into PowerDNS)
 ==========================================
 
+suported config options:
+
+python-class=<full python class pass>
