@@ -1,5 +1,5 @@
 #include "PyDomainInfo.h"
-#include "RefCount.h"
+#include "NewRefCount.h"
 
 PyObject * PyDomainInfoType_getseters_getid(CPyDomainInfo *self, void *closure)
 {
@@ -59,7 +59,7 @@ PyObject * PyDomainInfoType_getseters_getmasters(CPyDomainInfo *self, void *clos
 int PyDomainInfoType_getseters_setmasters(CPyDomainInfo *self, PyObject *value, void *closure)
 {
 	int retval = 0;
-	RefCount<PyObject> l_pymasters = PySequence_Fast(value, "");
+	NewRefCount<PyObject> l_pymasters = PySequence_Fast(value, "");
 	std::vector<std::string> l_masters;
 
 	if(l_pymasters)
@@ -69,7 +69,7 @@ int PyDomainInfoType_getseters_setmasters(CPyDomainInfo *self, PyObject *value, 
 
 		for(Py_ssize_t l_i = 0; l_i < l_pymasters_count; ++l_i)
 		{
-			RefCount<PyObject> l_pymaster = PyObject_Str(ll_pymasters[l_i]);
+			NewRefCount<PyObject> l_pymaster = PyObject_Str(ll_pymasters[l_i]);
 			l_masters.push_back(PyString_AsString(l_pymaster));
 		};
 
