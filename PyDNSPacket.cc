@@ -27,7 +27,7 @@ PyTypeObject PyDNSPacketType =
 {
     PyObject_HEAD_INIT(NULL)
     0,                                        /*ob_size*/
-    "playrix.powerDNS.DNSPacket",             /*tp_name*/
+    "playrix._powerDNS.DNSPacket",            /*tp_name*/
     sizeof(CPyDNSPacket),                     /*tp_basicsize*/
     0,                                        /*tp_itemsize*/
     NULL,                                     /*tp_dealloc*/
