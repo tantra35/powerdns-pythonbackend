@@ -1232,7 +1232,7 @@ class rmv_domain_backet_ip_result(object):
 
 if len(sys.argv) <= 1 or sys.argv[1] == '--help':
   print ''
-  print 'Usage: ' + sys.argv[0] + ' [-h host[:port]] [-u url] [-f[ramed]] function [arg1 [arg2...]]'
+  print 'Usage: ' + sys.argv[0] + ' [[-t host[:port]] | [-s [path_to_unix_socket]] | [-u url]] [-f[ramed]] function [arg1 [arg2...]]'
   print ''
   print 'Functions:'
   print '  bool add_domain(string dname, i32 ttl)'
@@ -1246,20 +1246,25 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
 
 pp = pprint.PrettyPrinter(indent = 2)
 host = 'localhost'
+unix=False;
 port = 9090
 uri = ''
 framed = False
 http = False
 argi = 1
 
-if sys.argv[argi] == '-h':
+if sys.argv[argi] == '-t':
   parts = sys.argv[argi+1].split(':')
   host = parts[0]
   if len(parts) > 1:
     port = int(parts[1])
   argi += 2
 
-if sys.argv[argi] == '-u':
+elif sys.argv[argi] == '-s':
+  host=sys.argv[argi+1];
+  unix=False;
+
+elif sys.argv[argi] == '-u':
   url = urlparse(sys.argv[argi+1])
   parts = url[1].split(':')
   host = parts[0]
@@ -1283,11 +1288,17 @@ args = sys.argv[argi+1:]
 if http:
   transport = THttpClient.THttpClient(host, port, uri)
 else:
-  socket = TSocket.TSocket(host, port)
+  if unix:
+    socket = TSocket.TSocket(unix_socket=host)
+
+  else:
+    socket = TSocket.TSocket(host, port)
+
   if framed:
     transport = TTransport.TFramedTransport(socket)
   else:
     transport = TTransport.TBufferedTransport(socket)
+
 protocol = TBinaryProtocol.TBinaryProtocol(transport)
 client = Client(protocol)
 transport.open()
