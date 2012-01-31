@@ -25,7 +25,6 @@ public:
 
 private:
 	PyObject* __m_py_object;
-	static pthread_mutex_t startup_lock;
 };
 
 class PythonBackendFactory : public BackendFactory
@@ -34,6 +33,9 @@ public:
 	PythonBackendFactory();
 	void declareArguments(const string &suffix = "");
 	DNSBackend *make(const string &suffix);
+
+private:
+	static pthread_mutex_t startup_lock;
 };
 
 class PythonBackendLoader
