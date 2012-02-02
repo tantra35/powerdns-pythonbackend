@@ -45,11 +45,10 @@ class backend:
 
     l_qtypeCode = qtype.getCode();
     l_lookup_responce = [];
-    l_lqdomain = qdomain.lower();
 
-    if l_lqdomain in l_domains:
+    if qdomain in l_domains:
       if l_qtypeCode == QType.ANY or l_qtypeCode == QType.A:
-        l_domain = l_domains[l_lqdomain];
+        l_domain = l_domains[qdomain];
         l_backets = l_domain['backets'];
 
         l_distance = 0xffffffff;
@@ -87,6 +86,9 @@ class backend:
             l_lookup_responce.append({'type': QType.A, 'content': l_ip, 'qname': qdomain, 'ttl': l_domain['ttl']});
 
         else:
-          self.__m_loger.warning("can't find any backet for client ip " + dnspkt.getRemote());
+          self.__m_loger.warning("can't find any backet for domain " + qdomain + " requested from ip " + dnspkt.getRemote());
+
+    else:
+      self.__m_loger.warning("can't find any backet for domain " + qdomain + " requested from ip " + dnspkt.getRemote());
 
     return l_lookup_responce;

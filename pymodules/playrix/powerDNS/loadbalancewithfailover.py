@@ -25,10 +25,9 @@ class backend:
 
     l_qtypeCode = qtype.getCode();
     l_lookup_responce = [];
-    l_lqdomain = qdomain.lower();
 
-    if l_lqdomain in l_domains:
-      l_domain = l_domains[l_lqdomain];
+    if qdomain in l_domains:
+      l_domain = l_domains[qdomain];
       l_backets = l_domain['backets'];
 
       if 'LB' in l_backets:
