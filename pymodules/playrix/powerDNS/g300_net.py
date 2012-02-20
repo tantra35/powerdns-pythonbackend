@@ -62,7 +62,16 @@ class backend:
         if not l_lqdomain in self.__m_qdomains:
           self.__m_qdomains[l_lqdomain] = {};
 
-        l_rr = {'nameserver': l_parts[0], 'hostmaster': l_parts[1].replace('@', '.'), 'serial': int(l_parts[2]), 'refresh': int(l_parts[3])}
+        l_rr = {
+          'nameserver': l_parts[0], 
+          'hostmaster': l_parts[1].replace('@', '.'),
+          'ttl': int(l_parts[2]), 
+          'serial': int(l_parts[3]), 
+          'refresh': int(l_parts[4]), 
+          'retry': int(l_parts[5]),
+          'expire': int(l_parts[6]),
+          'default_ttl': int(l_parts[7])
+        }
         self.__m_qdomains[l_lqdomain]['SOA'] = l_rr;
 
   def lookup(self, qtype, qdomain, dnspkt, domain_id):
@@ -145,11 +154,11 @@ class backend:
       soadata.serial = l_rr['serial'];
       soadata.refresh = l_rr['refresh'];
 
-      soadata.ttl = 86400;
-      soadata.default_ttl = 3600;
+      soadata.ttl = l_rr['ttl'];
+      soadata.default_ttl = l_rr['default_ttl'];
 
-      soadata.retry = 2*soadata.refresh;
-      soadata.expire = 7*soadata.refresh;
+      soadata.retry = l_rr['retry'];
+      soadata.expire = l_rr['expire'];
 
       soadata.domain_id = self.__m_zone_id;
 

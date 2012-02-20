@@ -7,6 +7,9 @@ import logging.handlers;
 #
 #
 #------------------------------------------------------------------------------
+def removeComments(string):
+  return re.sub(re.compile("(#|;).*$", re.MULTILINE) ,"" ,string) # remove all occurance singleline comments (//COMMENT\n ) from string
+
 class loader(object):
   def __init__(self):
     self.__m_domain_to_class = {};
@@ -25,13 +28,25 @@ class loader(object):
 
       for l_option in l_config.items(l_domainname):
         l_name, l_value = l_option;
+        l_value = removeComments(l_value)
         l_rrnames = ('a', 'ns', 'cname', 'soa', 'txt')
 
         if l_name in l_rrnames:
-          for l_line in str.splitlines(l_value):
-            if l_line != '':
-              ll_option = (l_name, l_line);
-              l_options.append(ll_option);
+          if l_name == 'soa':
+            lll_option = [];
+
+            for l_line in str.splitlines(l_value):
+              if l_line != '':
+                lll_option.append(l_line);
+
+            ll_option = (l_name, ' '.join(lll_option))
+            l_options.append(ll_option);
+
+          else:
+            for l_line in str.splitlines(l_value):
+              if l_line != '':
+                ll_option = (l_name, l_line);
+                l_options.append(ll_option);
 
       l_ldomainname = l_domainname.lower();
       self.__m_domain_to_class[l_ldomainname] = l_class(l_ldomainname, l_zone_id, l_options);
