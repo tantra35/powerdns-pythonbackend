@@ -1,6 +1,8 @@
 import ConfigParser;
 import logging;
 import logging.handlers;
+import traceback;
+import re;
 
 #------------------------------------------------------------------------------
 #
@@ -10,46 +12,72 @@ import logging.handlers;
 def removeComments(string):
   return re.sub(re.compile("(#|;).*$", re.MULTILINE) ,"" ,string) # remove all occurance singleline comments (//COMMENT\n ) from string
 
+def cmpdomains(d1, d2):
+  l_d1 = d1.split('.')
+  l_d2 = d2.split('.')
+
+  if(len(l_d1) > len(l_d2)):
+    return 1
+
+  elif(len(l_d1) < len(l_d2)):
+    return -1
+
+  else:
+    return cmp(d1, d2)
+
+#------------------------------------------------------------------------------
+#
+#
+#
+#------------------------------------------------------------------------------
 class loader(object):
   def __init__(self):
     self.__m_domain_to_class = {};
     self.__m_handler = None;
     self.__m_loger = logging.getLogger("loader");
 
-    l_config = g_config;
+    try:
+      l_config = g_config;
 
-    for l_domainname in l_config.sections():
-      l_module_name, l_class_name  = l_config.get(l_domainname, 'class').rsplit('.', 1);
-      l_zone_id = int(l_config.get(l_domainname, 'zone_id'));
-      l_options = [];
+      for l_domainname in l_config.sections():
+        l_module_name, l_class_name  = l_config.get(l_domainname, 'class').rsplit('.', 1);
+        l_zone_id = int(l_config.get(l_domainname, 'zone_id'));
+        l_options = [];
 
-      l_module =__import__(l_module_name, globals(), locals(), ['']);
-      l_class = getattr(l_module, l_class_name);
+        l_module =__import__(l_module_name, globals(), locals(), ['']);
+        l_class = getattr(l_module, l_class_name);
 
-      for l_option in l_config.items(l_domainname):
-        l_name, l_value = l_option;
-        l_value = removeComments(l_value)
-        l_rrnames = ('a', 'ns', 'cname', 'soa', 'txt')
+        for l_option in l_config.items(l_domainname):
+          l_name, l_value = l_option;
+          l_value = removeComments(l_value)
+          l_rrnames = ('a', 'ns', 'cname', 'soa', 'txt')
 
-        if l_name in l_rrnames:
-          if l_name == 'soa':
-            lll_option = [];
+          if l_name in l_rrnames:
+            if l_name == 'soa':
+              lll_option = [];
 
-            for l_line in str.splitlines(l_value):
-              if l_line != '':
-                lll_option.append(l_line);
+              for l_line in str.splitlines(l_value):
+                if l_line != '':
+                  lll_option.append(l_line);
 
-            ll_option = (l_name, ' '.join(lll_option))
-            l_options.append(ll_option);
+              ll_option = (l_name, ' '.join(lll_option))
+              l_options.append(ll_option);
 
-          else:
-            for l_line in str.splitlines(l_value):
-              if l_line != '':
-                ll_option = (l_name, l_line);
-                l_options.append(ll_option);
+            else:
+              for l_line in str.splitlines(l_value):
+                if l_line != '':
+                  ll_option = (l_name, l_line);
+                  l_options.append(ll_option);
 
-      l_ldomainname = l_domainname.lower();
-      self.__m_domain_to_class[l_ldomainname] = l_class(l_ldomainname, l_zone_id, l_options);
+        l_ldomainname = l_domainname.lower();
+        self.__m_domain_to_class[l_ldomainname] = l_class(l_ldomainname, l_zone_id, l_options);
+
+      self.__m_domains = self.__m_domain_to_class.keys();
+      self.__m_domains.sort(cmp=cmpdomains, reverse=True);
+
+    except Exception as e:
+      self.__m_loger.error(traceback.format_exc());
+      raise e
 
   def lookup(self, qtype, qdomain, dnspkt, domain_id):
     self.__m_loger.debug("call with qtype: " + str(qtype));
@@ -60,10 +88,12 @@ class loader(object):
     self.__m_handler = None;
     l_lqdomain = qdomain.lower();
 
-    for l_qdomain, l_handler in self.__m_domain_to_class.iteritems():
+    for l_qdomain in self.__m_domains:
       ll_qdomain = '.' + l_qdomain;
 
       if (l_lqdomain == l_qdomain) or (l_lqdomain.find(ll_qdomain, -len(ll_qdomain)) > 0):
+        l_handler = self.__m_domain_to_class[l_qdomain]
+
         self.__m_loger.debug("call with handler: " + str(l_handler));
         self.__m_handler = l_handler;
         l_handler.lookup(qtype, l_lqdomain, dnspkt, domain_id);
@@ -78,10 +108,12 @@ class loader(object):
     retval = False;
     l_lqdomain = qdomain.lower();
 
-    for l_qdomain, l_handler in self.__m_domain_to_class.iteritems():
+    for l_qdomain in self.__m_domains:
       ll_qdomain = '.' + l_qdomain;
 
       if (l_lqdomain == l_qdomain) or (l_lqdomain.find(ll_qdomain, -len(ll_qdomain)) > 0):
+        l_handler = self.__m_domain_to_class[l_qdomain]
+
         self.__m_loger.debug("call with handler: " + str(l_handler));
         self.__m_handler = l_handler;
         retval = l_handler.list(l_lqdomain, domain_id);
@@ -105,10 +137,12 @@ class loader(object):
     retval = False;
     l_lqdomain = qdomain.lower();
 
-    for l_qdomain, l_handler in self.__m_domain_to_class.iteritems():
+    for l_qdomain in self.__m_domains:
       ll_qdomain = '.' + l_qdomain;
 
       if (l_lqdomain == l_qdomain) or (l_lqdomain.find(ll_qdomain, -len(ll_qdomain)) > 0):
+        l_handler = self.__m_domain_to_class[l_qdomain]
+
         self.__m_loger.debug("call with handler: " + str(l_handler));
         self.__m_handler = l_handler;
         retval = l_handler.getSOA(l_lqdomain, soadata, dnspkt);

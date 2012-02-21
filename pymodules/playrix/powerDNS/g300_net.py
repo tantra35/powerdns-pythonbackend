@@ -19,8 +19,13 @@ class backend:
       l_name, l_value = l_option;
 
       if l_name == 'a':
-        l_parts = l_value.split(" ");
-        l_lqdomain = (l_parts[0] if '.' in l_parts[0] else l_parts[0] + '.' + qname).lower();
+        l_parts = l_value.split();
+
+        if l_parts[0] == '@':
+          l_lqdomain = qname
+
+        else:
+          l_lqdomain = (l_parts[0] if '.' in l_parts[0] else l_parts[0] + '.' + qname).lower();
 
         if not l_lqdomain in self.__m_qdomains:
           self.__m_qdomains[l_lqdomain] = {};
@@ -40,8 +45,13 @@ class backend:
           self.__m_qdomains[l_lqdomain]['A'].append({'handler': l_class(qname, l_parts[2:])});
 
       elif l_name == 'ns':  
-        l_parts = l_value.split(" ");
-        l_lqdomain = qname;
+        l_parts = l_value.split();
+
+        if l_parts[0] == '@':
+          l_lqdomain = qname
+
+        else:
+          l_lqdomain = (l_parts[0] if '.' in l_parts[0] else l_parts[0] + '.' + qname).lower();
 
         if not l_lqdomain in self.__m_qdomains:
           self.__m_qdomains[l_lqdomain] = {};
@@ -49,29 +59,30 @@ class backend:
         if not 'NS' in self.__m_qdomains[l_lqdomain]:
           self.__m_qdomains[l_lqdomain]['NS'] = [];
 
-        l_rr = {'type': QType.NS, 'content': l_parts[0], 'qname': l_lqdomain, 'ttl': int(l_parts[1])}
+        l_rr = {'type': QType.NS, 'content': l_parts[1], 'qname': l_lqdomain, 'ttl': int(l_parts[2])}
         self.__m_qdomains[l_lqdomain]['NS'].append(l_rr);
 
       elif l_name == 'cname':
         pass;
 
       elif l_name == "soa":
-        l_parts = l_value.split(" ");
+        l_parts = l_value.split();
         l_lqdomain = qname;
 
         if not l_lqdomain in self.__m_qdomains:
           self.__m_qdomains[l_lqdomain] = {};
 
         l_rr = {
-          'nameserver': l_parts[0], 
+          'nameserver': l_parts[0],
           'hostmaster': l_parts[1].replace('@', '.'),
           'ttl': int(l_parts[2]), 
           'serial': int(l_parts[3]), 
-          'refresh': int(l_parts[4]), 
+          'refresh': int(l_parts[4]),
           'retry': int(l_parts[5]),
           'expire': int(l_parts[6]),
           'default_ttl': int(l_parts[7])
         }
+
         self.__m_qdomains[l_lqdomain]['SOA'] = l_rr;
 
   def lookup(self, qtype, qdomain, dnspkt, domain_id):
